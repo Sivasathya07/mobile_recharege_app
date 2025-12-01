@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – TN Traffic{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="display-5 mb-4">Tamil Nadu Traffic Dashboard</h1>
+        <div id="dashboard-map" class="rounded shadow mb-4" style="height: 400px;"></div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <a href="{{ url_for('traffic') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                    View Traffic Predictions
+                </a>
+                <div class="card mt-3">
+                    <div class="card-header">Road Network</div>
+                    <ul class="list-group list-group-flush">
+                        {% for type, count in road_types.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ type|title }}
+                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialize map
+    const map = L.map('dashboard-map').setView([11.1271, 78.6569], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add markers
+    const roads = {{ road_json|tojson|safe }};
+    Object.entries(roads).forEach(([name, data]) => {
+        L.marker([data.lat, data.lon]).addTo(map)
+            .bindPopup(`<b>${name}</b><br>Type: ${data.type}`);
+    });
+</script>
+{% endblock %}

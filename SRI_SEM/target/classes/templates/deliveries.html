@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Deliveries - Pharmacy Inventory</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .status-pending { color: orange; }
+        .status-dispatched { color: blue; }
+        .status-delivered { color: green; }
+        .status-failed { color: red; }
+        select { padding: 5px; }
+        button { padding: 5px 10px; margin: 2px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Delivery Management</h1>
+    <a href="/">Back to Home</a>
+
+    <h2>All Deliveries</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Assigned Staff</th>
+                <th>Dispatched At</th>
+                <th>Delivered At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="delivery : ${deliveries}">
+                <td th:text="${delivery.deliveryId}"></td>
+                <td th:text="${delivery.order.orderId}"></td>
+                <td th:text="${delivery.order.customerName}"></td>
+                <td th:class="'status-' + ${delivery.status.name().toLowerCase()}" th:text="${delivery.status}"></td>
+                <td th:text="${delivery.assignedStaff != null ? delivery.assignedStaff.username : 'Not Assigned'}"></td>
+                <td th:text="${delivery.dispatchedAt}"></td>
+                <td th:text="${delivery.deliveredAt}"></td>
+                <td>
+                    <select id="staffSelect-${delivery.deliveryId}">
+                        <option value="">Select Staff</option>
+                        <option th:each="staff : ${deliveryStaff}" th:value="${staff.userId}" th:text="${staff.username}"></option>
+                    </select>
+                    <button onclick="assignStaff(delivery.deliveryId)">Assign</button>
+                    <button onclick="updateStatus(delivery.deliveryId, 'DISPATCHED')">Dispatch</button>
+                    <button onclick="updateStatus(delivery.deliveryId, 'DELIVERED')">Delivered</button>
+                    <button onclick="updateStatus(delivery.deliveryId, 'FAILED')">Failed</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function assignStaff(deliveryId) {
+            const staffId = document.getElementById(`staffSelect-${deliveryId}`).value;
+            if (!staffId) {
+                alert('Please select a staff member');
+                return;
+            }
+            fetch(`/api/deliveries/${deliveryId}/assign-staff?staffId=${staffId}`, { method: 'PUT' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error assigning staff');
+                    }
+                });
+        }
+
+        function updateStatus(deliveryId, status) {
+            fetch(`/api/deliveries/${deliveryId}/status?status=${status}`, { method: 'PUT' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error updating delivery status');
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+    "aspirin": {
+        "interactions": {
+            "ibuprofen": {
+                "severity": "moderate",
+                "effect": "Increased risk of gastrointestinal bleeding",
+                "recommendation": "Avoid concurrent use"
+            }
+        },
+        "alternatives": [
+            {"name": "Acetaminophen", "reason": "Safer for GI tract"}
+        ],
+        "age_dosage": {
+            "18": "325-650mg every 4 hours",
+            "65": "Use lower doses in elderly"
+        }
+    }
+}

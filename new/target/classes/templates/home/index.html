@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Pharmacy Management System</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-section py-5">
+            <div class="container">
+                <div class="row align-items-center min-vh-75 py-5">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <h1 class="display-4 fw-bold mb-4">Modern Pharmacy Management Made Simple</h1>
+                        <p class="lead mb-4">Streamline your pharmacy operations with our comprehensive management solution. Manage inventory, process orders, and handle prescriptions with ease.</p>
+                        <div class="d-flex gap-3">
+                            <a href="#features" class="btn btn-primary btn-lg px-4">Explore Features</a>
+                            <a href="#contact" class="btn btn-outline-primary btn-lg px-4">Contact Us</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <img src="https://img.freepik.com/free-vector/pharmacy-interior-with-pharmacist-showing-medicine-bottle-client-drugstore-pharmacology-store-with-drugs-shelves-counter-vector-illustration_107173-23773.jpg" 
+                             alt="Pharmacy Management" 
+                             class="img-fluid rounded-3 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-5 bg-light">
+            <div class="container py-5">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <span class="badge bg-primary-soft text-primary mb-3">Features</span>
+                    <h2 class="display-5 fw-bold mb-3">Powerful Features for Your Pharmacy</h2>
+                    <p class="lead text-muted">Everything you need to manage your pharmacy efficiently and effectively</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-shadow transition-all">
+                            <div class="card-body p-4">
+                                <div class="icon-wrapper bg-primary-soft text-primary rounded-circle mb-4" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-pills fa-2x"></i>
+                                </div>
+                                <h4 class="card-title mb-3">Inventory Management</h4>
+                                <p class="card-text text-muted">Track and manage your medicine inventory with real-time updates, low-stock alerts, and batch tracking.</p>
+                                <a href="#" class="btn btn-link p-0 text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-shadow transition-all">
+                            <div class="card-body p-4">
+                                <div class="icon-wrapper bg-primary-soft text-primary rounded-circle mb-4" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                </div>
+                                <h4 class="card-title mb-3">Order Processing</h4>
+                                <p class="card-text text-muted">Streamline your order processing with an intuitive interface and automated workflow management.</p>
+                                <a href="#" class="btn btn-link p-0 text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-card card h-100 border-0 shadow-sm hover-shadow transition-all">
+                            <div class="card-body p-4">
+                                <div class="icon-wrapper bg-primary-soft text-primary rounded-circle mb-4" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-file-prescription fa-2x"></i>
+                                </div>
+                                <h4 class="card-title mb-3">e-Prescriptions</h4>
+                                <p class="card-text text-muted">Digitally manage prescriptions, track refills, and ensure compliance with healthcare regulations.</p>
+                                <a href="#" class="btn btn-link p-0 text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container py-4">
+                <div class="row g-4 text-center">
+                    <div class="col-6 col-md-3" data-aos="fade-up">
+                        <div class="p-3">
+                            <h2 class="display-4 fw-bold mb-2">500+</h2>
+                            <p class="mb-0 opacity-75">Happy Pharmacies</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="p-3">
+                            <h2 class="display-4 fw-bold mb-2">1M+</h2>
+                            <p class="mb-0 opacity-75">Orders Processed</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                        <div class="p-3">
+                            <h2 class="display-4 fw-bold mb-2">24/7</h2>
+                            <p class="mb-0 opacity-75">Support</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                        <div class="p-3">
+                            <h2 class="display-4 fw-bold mb-2">99.9%</h2>
+                            <p class="mb-0 opacity-75">Uptime</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-5">
+            <div class="container py-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                        <img src="https://img.freepik.com/free-vector/pharmacy-interior-with-pharmacist-showing-medicine-bottle-client-drugstore-pharmacology-store-with-drugs-shelves-counter-vector-illustration_107173-23773.jpg" 
+                             alt="About Us" 
+                             class="img-fluid rounded-3 shadow">
+                    </div>
+                    <div class="col-lg-6 ps-lg-5" data-aos="fade-left">
+                        <span class="badge bg-primary-soft text-primary mb-3">About Us</span>
+                        <h2 class="display-5 fw-bold mb-4">Transforming Pharmacy Management</h2>
+                        <p class="lead text-muted mb-4">We're dedicated to providing innovative solutions that help pharmacies operate more efficiently and deliver better patient care.</p>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="me-4">
+                                <div class="icon-wrapper bg-primary-soft text-primary rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Easy to Use</h5>
+                                <p class="text-muted mb-0">Intuitive interface designed for all skill levels</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="me-4">
+                                <div class="icon-wrapper bg-primary-soft text-primary rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Secure & Compliant</h5>
+                                <p class="text-muted mb-0">HIPAA compliant with enterprise-grade security</p>
+                            </div>
+                        </div>
+                        <a href="#" class="btn btn-primary mt-2">Learn More About Us</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+                        <h2 class="fw-bold mb-4">Why Choose Our Solution?</h2>
+                        <p class="lead mb-4">We understand the challenges of modern pharmacy management and have built a solution that addresses them all.</p>
+                        
+                        <div class="d-flex mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="me-4 text-primary">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5>User-Friendly Interface</h5>
+                                <p class="text-muted mb-0">Intuitive design that requires minimal training to get started.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex mb-4" data-aos="fade-up" data-aos-delay="200">
+                            <div class="me-4 text-primary">
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5>Secure & Compliant</h5>
+                                <p class="text-muted mb-0">Built with security and regulatory compliance in mind.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex" data-aos="fade-up" data-aos-delay="300">
+                            <div class="me-4 text-primary">
+                                <i class="fas fa-sync fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5>Regular Updates</h5>
+                                <p class="text-muted mb-0">Continuous improvements and new features added regularly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-5 bg-primary text-white">
+            <div class="container text-center">
+                <h2 class="fw-bold mb-4" data-aos="fade-up">Ready to Transform Your Pharmacy?</h2>
+                <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Join thousands of pharmacies that trust our solution for their daily operations.</p>
+                <div data-aos="fade-up" data-aos-delay="200">
+                    <a href="#contact" class="btn btn-light btn-lg me-3">Get Started</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-5">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="fw-bold">Get In Touch</h2>
+                    <p class="text-muted">Have questions? We'd love to hear from you.</p>
+                </div>
+                
+                <div class="row justify-content-center">
+                    <div class="col-lg-8" data-aos="fade-up">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-5">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="name" class="form-label">Your Name</label>
+                                            <input type="text" class="form-control" id="name" placeholder="John Doe" required>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="email" placeholder="john@example.com" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="subject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="subject" placeholder="How can we help you?">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="message" class="form-label">Your Message</label>
+                                        <textarea class="form-control" id="message" rows="4" placeholder="Tell us more about your needs..." required></textarea>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script th:inline="javascript">
+            // Initialize tooltips
+            $(function () {
+                $('[data-bs-toggle="tooltip"]').tooltip();
+            });
+            
+            // Example of form submission handling
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                // Add your form submission logic here
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            });
+        </script>
+    </div>
+</body>
+</html>

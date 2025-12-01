@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sales</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #34495e;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #ecf0f1;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .form-container {
+            background: #2c3e50;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #7f8c8d;
+            border-radius: 5px;
+            font-size: 16px;
+            background: #34495e;
+            color: #ecf0f1;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52,152,219,0.5);
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #7f8c8d;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        th:hover {
+            background: #2980b9;
+        }
+        tr:nth-child(even) {
+            background: #2c3e50;
+        }
+        tr:hover {
+            background: #34495e;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("salesTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Sales</h1>
+        <div class="form-container">
+            <h2>Add New Sale</h2>
+            <form action="/sales" method="post">
+                <div class="form-group">
+                    <label for="medicine">Medicine:</label>
+                    <select id="medicine" name="medicine" required>
+                        <option value="">Select Medicine</option>
+                        <option th:each="med : ${medicines}" th:value="${med.medicineId}" th:text="${med.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantitySold">Quantity Sold:</label>
+                    <input type="number" id="quantitySold" name="quantitySold" required>
+                </div>
+                <div class="form-group">
+                    <label for="saleDate">Sale Date:</label>
+                    <input type="date" id="saleDate" name="saleDate" required>
+                </div>
+                <button type="submit">Add Sale</button>
+            </form>
+        </div>
+        <table id="salesTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">ID</th>
+                    <th onclick="sortTable(1)">Medicine</th>
+                    <th onclick="sortTable(2)">Quantity Sold</th>
+                    <th onclick="sortTable(3)">Total Price</th>
+                    <th onclick="sortTable(4)">Sale Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sale : ${sales}">
+                    <td th:text="${sale.saleId}"></td>
+                    <td th:text="${sale.medicine.name}"></td>
+                    <td th:text="${sale.quantitySold}"></td>
+                    <td th:text="${sale.totalPrice}"></td>
+                    <td th:text="${sale.saleDate}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>

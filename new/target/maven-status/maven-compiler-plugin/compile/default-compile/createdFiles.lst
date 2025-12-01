@@ -1,0 +1,6 @@
+com\pharmacy\PharmacyApplication.class
+com\pharmacy\controller\ContactController.class
+com\pharmacy\controller\HomeController.class
+com\pharmacy\controller\TestController.class
+com\pharmacy\config\CorsConfig$1.class
+com\pharmacy\config\CorsConfig.class

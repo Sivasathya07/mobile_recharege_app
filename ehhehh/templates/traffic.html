@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Traffic Prediction – TN Traffic{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="mb-4">Traffic Prediction</h2>
+        <form method="POST" class="mb-4">
+            <div class="mb-3">
+                <label for="road_name" class="form-label">Select a Road:</label>
+                <select name="road_name" id="road_name" class="form-select" required>
+                    <option value="">-- Select a road --</option>
+                    
+                    {% for road in roads %}
+                        <option value="{{ road }}">{{ road }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Predict Traffic</button>
+        </form>
+        
+        {% if prediction %}
+        <div class="alert alert-{{ 'danger' if prediction.traffic == 'high' else 'warning' if prediction.traffic == 'medium' else 'success' }}">
+            <h4>Prediction Result</h4>
+            <p><strong>Road:</strong> {{ prediction.road }}</p>
+            <p><strong>Traffic:</strong> <b>{{ prediction.traffic|upper }}</b></p>
+            <p><strong>Confidence:</strong> {{ (prediction.confidence * 100)|round|int }}%</p>
+        </div>
+        {% endif %}
+    </div>
+    <input type="time"> or a dropdown: Morning, Afternoon, Evening, Night
+
+    
+    <div class="col-md-6">
+        <div id="map" class="rounded shadow" style="height: 400px;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialize map
+    const map = L.map('map').setView([11.1271, 78.6569], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add markers
+    const roads = {{ road_json|tojson|safe }};
+    Object.entries(roads).forEach(([name, data]) => {
+        const marker = L.marker([data.lat, data.lon]).addTo(map)
+            .bindPopup(`<b>${name}</b><br>Type: ${data.type}`);
+        
+        // Connect dropdown to map
+        document.getElementById('road_name').addEventListener('change', function() {
+            if (this.value === name) {
+                map.setView([data.lat, data.lon], 12);
+                marker.openPopup();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Alarm Clock ⏰</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-clock"></i> Smart Alarm Clock</h1>
+            <div class="current-time" id="currentTime"></div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Alarm Setup Section -->
+            <section class="alarm-setup card">
+                <h2><i class="fas fa-bell"></i> Set Your Alarm</h2>
+                <div class="time-input">
+                    <input type="time" id="alarmTime" class="time-picker">
+                    <button id="setAlarm" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Set Alarm
+                    </button>
+                </div>
+                
+                <!-- Active Alarms -->
+                <div class="active-alarms">
+                    <h3>Active Alarms</h3>
+                    <div id="alarmList" class="alarm-list"></div>
+                </div>
+            </section>
+
+            <!-- Alarm Ringing Section (Hidden by default) -->
+            <section id="alarmRinging" class="alarm-ringing card hidden">
+                <div class="ringing-header">
+                    <i class="fas fa-bell-ring animated-bell"></i>
+                    <h2>WAKE UP! ⏰</h2>
+                </div>
+                
+                <!-- Puzzle Container -->
+                <div class="puzzle-container">
+                    <h3>Solve the Puzzle to Stop Alarm</h3>
+                    <div id="puzzleContent" class="puzzle-content"></div>
+                    <div class="answer-input">
+                        <input type="text" id="puzzleAnswer" placeholder="Enter your answer...">
+                        <button id="submitAnswer" class="btn btn-success">
+                            <i class="fas fa-check"></i> Submit
+                        </button>
+                    </div>
+                    <div id="puzzleFeedback" class="feedback"></div>
+                </div>
+            </section>
+
+            <!-- Motivation Quote Section -->
+            <section id="motivationSection" class="motivation-card hidden">
+                <div class="quote-container">
+                    <i class="fas fa-quote-left"></i>
+                    <p id="motivationQuote" class="quote"></p>
+                    <i class="fas fa-quote-right"></i>
+                </div>
+                <button id="closeAlarm" class="btn btn-secondary">
+                    <i class="fas fa-sun"></i> Start Your Day!
+                </button>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with <i class="fas fa-heart"></i> - Smart Alarm Clock</p>
+        </footer>
+    </div>
+
+    <!-- Audio for Alarm -->
+    <audio id="alarmSound" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

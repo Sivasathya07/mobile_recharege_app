@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetinaScan AI - Retinal Disease Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: #4FC3F7;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .upload-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .result-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 1000;
+        }
+
+        .success { background: #27ae60; }
+        .error { background: #e74c3c; }
+        .info { background: #3498db; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-eye"></i>
+                <h1>RetinaScan AI</h1>
+            </div>
+            <p>Advanced Retinal Disease Detection Using AI</p>
+        </div>
+
+        <div class="upload-card">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h2>Upload Fundus Image</h2>
+            <p>Supported formats: JPG, PNG, JPEG | Max size: 10MB</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                <div class="upload-placeholder">
+                    <i class="fas fa-image" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                    <p>Click to browse or drag & drop your fundus image</p>
+                </div>
+                <img id="previewImage" style="max-width: 100%; max-height: 300px; display: none; border-radius: 10px;">
+            </div>
+            
+            <button class="analyze-btn" id="analyzeBtn" disabled>
+                <i class="fas fa-search"></i> Analyze Image
+            </button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="upload-card">
+                <h2>Analysis Results</h2>
+                
+                <div class="results-grid">
+                    <div class="result-box">
+                        <h3><i class="fas fa-diagnosis"></i> Diagnosis</h3>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #e74c3c; margin: 10px 0;" id="diseaseName">-</div>
+                        <div style="font-size: 1.2rem; color: #667eea; margin: 10px 0;" id="confidence">-</div>
+                        <div style="color: #666;" id="diseaseDescription">-</div>
+                    </div>
+
+                    <div class="result-box">
+                        <h3><i class="fas fa-image"></i> Image Preview</h3>
+                        <img id="resultImage" style="max-width: 100%; border-radius: 10px;">
+                    </div>
+
+                    <div class="result-box">
+                        <h3><i class="fas fa-prescription-bottle"></i> Treatment Recommendations</h3>
+                        <div id="treatmentsList"></div>
+                    </div>
+
+                    <div class="result-box">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Emergency Signs</h3>
+                        <div id="emergencyList"></div>
+                    </div>
+                </div>
+
+                <button class="analyze-btn" id="newAnalysisBtn">
+                    <i class="fas fa-redo"></i> New Analysis
+                </button>
+            </div>
+        </div>
+
+        <div class="loading-overlay" id="loadingOverlay">
+            <div style="text-align: center;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                <p>Analyzing retinal image...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class RetinalDiseaseDetector {
+            constructor() {
+                this.API_BASE_URL = '/api';
+                this.currentImage = null;
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                const uploadArea = document.getElementById('uploadArea');
+                const imageInput = document.getElementById('imageInput');
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+
+                uploadArea.addEventListener('click', () => imageInput.click());
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#667eea';
+                    uploadArea.style.background = '#f0f3ff';
+                });
+
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = '#ddd';
+                    uploadArea.style.background = '';
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#ddd';
+                    uploadArea.style.background = '';
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.handleImageSelection(files[0]);
+                    }
+                });
+
+                imageInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleImageSelection(e.target.files[0]);
+                    }
+                });
+
+                analyzeBtn.addEventListener('click', () => this.analyzeImage());
+                newAnalysisBtn.addEventListener('click', () => this.resetAnalysis());
+            }
+
+            handleImageSelection(file) {
+                if (!file.type.match('image.*')) {
+                    this.showNotification('Please select a valid image file.', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.currentImage = file;
+                    this.displayPreviewImage(e.target.result);
+                    document.getElementById('analyzeBtn').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            displayPreviewImage(imageData) {
+                const previewImage = document.getElementById('previewImage');
+                const uploadPlaceholder = document.querySelector('.upload-placeholder');
+
+                previewImage.src = imageData;
+                previewImage.style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+            }
+
+            async analyzeImage() {
+                if (!this.currentImage) return;
+
+                this.showLoading(true);
+
+                try {
+                    const formData = new FormData();
+                    formData.append('image', this.currentImage);
+
+                    const response = await fetch(`${this.API_BASE_URL}/predict`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.displayResults(result);
+                        this.showNotification('Analysis completed successfully!', 'success');
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    this.showNotification('Analysis failed: ' + error.message, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            displayResults(result) {
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'block';
+
+                document.getElementById('diseaseName').textContent = result.prediction.disease;
+                document.getElementById('confidence').textContent = `Confidence: ${(result.prediction.confidence * 100).toFixed(1)}%`;
+                document.getElementById('diseaseDescription').textContent = result.prediction.description;
+
+                document.getElementById('resultImage').src = URL.createObjectURL(this.currentImage);
+
+                this.updateList('treatmentsList', result.recommendations.treatments);
+                this.updateList('emergencyList', result.recommendations.emergency_signs);
+            }
+
+            updateList(elementId, items) {
+                const container = document.getElementById(elementId);
+                container.innerHTML = '';
+
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.style.padding = '10px';
+                        div.style.margin = '5px 0';
+                        div.style.background = 'white';
+                        div.style.borderRadius = '5px';
+                        div.textContent = item;
+                        container.appendChild(div);
+                    });
+                }
+            }
+
+            resetAnalysis() {
+                document.getElementById('imageInput').value = '';
+                document.getElementById('previewImage').style.display = 'none';
+                document.querySelector('.upload-placeholder').style.display = 'block';
+                document.getElementById('analyzeBtn').disabled = true;
+                document.getElementById('resultsSection').style.display = 'none';
+                document.querySelector('.upload-card').style.display = 'block';
+                this.currentImage = null;
+            }
+
+            showLoading(show) {
+                document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+            }
+
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new RetinalDiseaseDetector();
+        });
+    </script>
+</body>
+</html>
