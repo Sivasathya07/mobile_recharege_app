@@ -4,6 +4,7 @@ import { adminAPI } from '../services/api';
 import { Users, DollarSign, CreditCard, TrendingUp, Eye, Edit, Trash2, Plus, Settings, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { initializeAdminData } from '../utils/initAdminData';
 
 const AdminDashboard = () => {
   const { user, isAuthenticated } = useAuth();
@@ -38,6 +39,8 @@ const AdminDashboard = () => {
       navigate('/dashboard');
       return;
     }
+    // Initialize sample data
+    initializeAdminData();
     fetchData();
   }, [user, isAuthenticated, navigate]);
 
@@ -45,38 +48,115 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch users from database
-      const usersResponse = await fetch('/api/users/all');
-      const usersData = usersResponse.ok ? await usersResponse.json() : { users: [] };
-      const users = usersData.users || [];
-      setUsers(users);
+      // Demo users data
+      const demoUsers = [
+        {
+          _id: '1',
+          name: 'John Doe',
+          email: 'john@example.com',
+          role: 'user',
+          balance: 1250,
+          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          _id: '2',
+          name: 'Jane Smith',
+          email: 'jane@example.com',
+          role: 'user',
+          balance: 850,
+          createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          _id: '3',
+          name: 'Admin User',
+          email: 'admin@demo.com',
+          role: 'admin',
+          balance: 5000,
+          createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          _id: '4',
+          name: 'Mike Johnson',
+          email: 'mike@example.com',
+          role: 'user',
+          balance: 2100,
+          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ];
       
-      // Fetch transactions from database
-      const transactionsResponse = await fetch('/api/transactions/all');
-      const transactionsData = transactionsResponse.ok ? await transactionsResponse.json() : { transactions: [] };
-      const transactions = transactionsData.transactions || [];
+      // Get global transactions from localStorage
+      const globalTransactions = JSON.parse(localStorage.getItem('adminGlobalTransactions') || '[]');
       
-      // Fetch plans from database
-      const plansResponse = await fetch('/api/plans/all');
-      const plansData = plansResponse.ok ? await plansResponse.json() : { plans: [] };
-      const allPlans = plansData.plans || [];
-      setPlans(allPlans);
-      console.log('Fetched plans:', allPlans.length);
+      // Demo transactions if none exist
+      const demoTransactions = [
+        {
+          _id: '1',
+          type: 'recharge',
+          amount: 299,
+          status: 'success',
+          operator: 'Airtel',
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          userName: 'John Doe'
+        },
+        {
+          _id: '2',
+          type: 'wallet_add',
+          amount: 500,
+          status: 'success',
+          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          userName: 'Jane Smith'
+        },
+        {
+          _id: '3',
+          type: 'recharge',
+          amount: 179,
+          status: 'success',
+          operator: 'Jio',
+          createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+          userName: 'Mike Johnson'
+        },
+        {
+          _id: '4',
+          type: 'recharge',
+          amount: 399,
+          status: 'success',
+          operator: 'Vi',
+          createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+          userName: 'John Doe'
+        },
+        {
+          _id: '5',
+          type: 'recharge',
+          amount: 155,
+          status: 'success',
+          operator: 'BSNL',
+          createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+          userName: 'Jane Smith'
+        }
+      ];
+      
+      const allTransactions = globalTransactions.length > 0 ? globalTransactions : demoTransactions;
+      
+      // Get admin plans from localStorage
+      const adminPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
+      setPlans(adminPlans);
+      
+      setUsers(demoUsers);
       
       // Calculate stats
-      const totalRevenue = transactions.filter(t => t.type === 'recharge').reduce((sum, t) => sum + (t.amount || 0), 0);
+      const totalRevenue = allTransactions.filter(t => t.type === 'recharge').reduce((sum, t) => sum + (t.amount || 0), 0);
       
       setStats({
-        totalUsers: users.length,
-        totalAdmins: users.filter(u => u.role === 'admin').length,
-        totalTransactions: transactions.length,
+        totalUsers: demoUsers.length,
+        totalAdmins: demoUsers.filter(u => u.role === 'admin').length,
+        totalTransactions: allTransactions.length,
         totalRevenue,
-        recentTransactions: transactions.slice(0, 15)
+        recentTransactions: allTransactions.slice(0, 15)
       });
       
       // Recharge analytics
       const operatorStats = { 'Airtel': { amount: 0, count: 0 }, 'Jio': { amount: 0, count: 0 }, 'Vi': { amount: 0, count: 0 }, 'BSNL': { amount: 0, count: 0 } };
-      transactions.filter(t => t.type === 'recharge').forEach(t => {
+      allTransactions.filter(t => t.type === 'recharge').forEach(t => {
         const operator = t.operator || 'Airtel';
         if (operatorStats[operator]) {
           operatorStats[operator].amount += t.amount;
@@ -342,10 +422,10 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {stats?.recentTransactions?.map((transaction) => (
-                      <tr key={transaction._id}>
+                    {stats?.recentTransactions?.map((transaction, index) => (
+                      <tr key={transaction._id || transaction.id || index}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {transaction.type}
+                          {transaction.type === 'wallet_add' ? 'Wallet Top-up' : transaction.type}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           ₹{transaction.amount}
@@ -360,12 +440,19 @@ const AdminDashboard = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(transaction.createdAt).toLocaleDateString()}
+                          {new Date(transaction.createdAt || transaction.date).toLocaleDateString()}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                {(!stats?.recentTransactions || stats.recentTransactions.length === 0) && (
+                  <div className="text-center py-8">
+                    <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No transactions found</p>
+                    <p className="text-sm text-gray-500 mt-2">Transactions will appear here as users make recharges</p>
+                  </div>
+                )}
               </div>
             </div>
           </>
@@ -445,6 +532,13 @@ const AdminDashboard = () => {
                   ))}
                 </tbody>
               </table>
+              {users.length === 0 && (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">No users found</p>
+                  <p className="text-sm text-gray-500 mt-2">Registered users will appear here</p>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Smartphone, Zap, Clock, Wifi, Gift, Star } from 'lucide-react';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const transitionTimeoutRef = useRef(null);
@@ -110,14 +112,14 @@ const HeroSection = () => {
                     <div className="hero-buttons">
                       <button 
                         className="btn-claim"
-                        onClick={() => window.location.href = '/recharge'}
+                        onClick={() => navigate('/recharge')}
                         type="button"
                       >
                         Claim Now
                       </button>
                       <button 
                         className="btn-learn"
-                        onClick={() => window.location.href = '/plans'}
+                        onClick={() => navigate('/plans')}
                         type="button"
                       >
                         Learn More

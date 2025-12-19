@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { rechargeAPI, walletAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { 
@@ -352,6 +352,7 @@ const mockPlans = {
 };
 
 const Recharge = () => {
+  const navigate = useNavigate();
   const { addTransaction, updateBalance, user } = useAuth();
   const [searchParams] = useSearchParams();
   const [selectedType, setSelectedType] = useState(searchParams.get('type') || 'mobile');
@@ -443,7 +444,7 @@ const Recharge = () => {
     const token = localStorage.getItem('token');
     if (data.paymentMethod === 'wallet' && !token) {
       toast.error('Please login to use wallet payment');
-      window.location.href = '/login?redirect=/recharge';
+      navigate('/login?redirect=/recharge');
       return;
     }
 

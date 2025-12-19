@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authAPI, userAPI } from '../services/api';
 
@@ -216,7 +217,9 @@ export const AuthProvider = ({ children }) => {
     
     // Force redirect to login page
     setTimeout(() => {
-      window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        window.location.replace('/login');
+      }
     }, 500);
   };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   History as HistoryIcon,  
   Download, 
@@ -15,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 
 const History = () => {
+  const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -61,7 +63,7 @@ const History = () => {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Login Required</h2>
           <p className="text-gray-600 mb-6">Please login to view your transaction history</p>
           <button
-            onClick={() => window.location.href = '/login?redirect=/history'}
+            onClick={() => navigate('/login?redirect=/history')}
             className="btn-primary w-full"
           >
             Login to Continue
@@ -268,7 +270,7 @@ const History = () => {
             </p>
             {!searchTerm && statusFilter === 'all' && (
               <button 
-                onClick={() => window.location.href = '/recharge'}
+                onClick={() => navigate('/recharge')}
                 className="btn-primary"
               >
                 Make Your First Recharge
