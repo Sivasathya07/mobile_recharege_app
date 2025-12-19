@@ -1,0 +1,130 @@
+[
+  {
+    "operator": "Airtel",
+    "type": "prepaid",
+    "amount": 199,
+    "validity": "28 days",
+    "benefits": "1.5GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Popular plan with daily data"
+  },
+  {
+    "operator": "Airtel",
+    "type": "prepaid",
+    "amount": 299,
+    "validity": "28 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "High data plan"
+  },
+  {
+    "operator": "Airtel",
+    "type": "prepaid",
+    "amount": 449,
+    "validity": "56 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Long validity plan"
+  },
+  {
+    "operator": "Airtel",
+    "type": "prepaid",
+    "amount": 599,
+    "validity": "84 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Extended validity"
+  },
+  {
+    "operator": "Jio",
+    "type": "prepaid",
+    "amount": 179,
+    "validity": "28 days",
+    "benefits": "1.5GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Basic daily data plan"
+  },
+  {
+    "operator": "Jio",
+    "type": "prepaid",
+    "amount": 239,
+    "validity": "28 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Premium daily data"
+  },
+  {
+    "operator": "Jio",
+    "type": "prepaid",
+    "amount": 399,
+    "validity": "56 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Long term plan"
+  },
+  {
+    "operator": "Jio",
+    "type": "prepaid",
+    "amount": 719,
+    "validity": "84 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Maximum validity"
+  },
+  {
+    "operator": "Vi",
+    "type": "prepaid",
+    "amount": 219,
+    "validity": "28 days",
+    "benefits": "1.5GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Standard plan"
+  },
+  {
+    "operator": "Vi",
+    "type": "prepaid",
+    "amount": 319,
+    "validity": "28 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "High speed data"
+  },
+  {
+    "operator": "Vi",
+    "type": "prepaid",
+    "amount": 479,
+    "validity": "56 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Extended plan"
+  },
+  {
+    "operator": "Vi",
+    "type": "prepaid",
+    "amount": 699,
+    "validity": "84 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Long duration plan"
+  },
+  {
+    "operator": "BSNL",
+    "type": "prepaid",
+    "amount": 187,
+    "validity": "28 days",
+    "benefits": "1GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Government network plan"
+  },
+  {
+    "operator": "BSNL",
+    "type": "prepaid",
+    "amount": 247,
+    "validity": "28 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Enhanced data plan"
+  },
+  {
+    "operator": "BSNL",
+    "type": "prepaid",
+    "amount": 397,
+    "validity": "70 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Long validity offer"
+  },
+  {
+    "operator": "BSNL",
+    "type": "prepaid",
+    "amount": 797,
+    "validity": "160 days",
+    "benefits": "2GB/day, Unlimited calls, 100 SMS/day",
+    "description": "Maximum duration plan"
+  }
+]

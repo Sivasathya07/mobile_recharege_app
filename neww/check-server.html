@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Status Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Recharge App - Server Status</h1>
+    
+    <button onclick="checkBackend()">Check Backend Server</button>
+    <button onclick="testRegistration()">Test Registration</button>
+    
+    <div id="status"></div>
+
+    <script>
+        async function checkBackend() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="status">Checking backend server...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/test');
+                const data = await response.json();
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ Backend Server is Running!<br>
+                        Message: ${data.message}<br>
+                        Database: ${data.database}<br>
+                        Time: ${new Date(data.timestamp).toLocaleString()}
+                    </div>
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Backend Server is NOT running!<br>
+                        Error: ${error.message}<br><br>
+                        <strong>To fix this:</strong><br>
+                        1. Open terminal in the 'backend' folder<br>
+                        2. Run: npm start<br>
+                        3. Wait for "Server running on port 5000" message
+                    </div>
+                `;
+            }
+        }
+
+        async function testRegistration() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="status">Testing registration endpoint...</div>';
+            
+            const testUser = {
+                name: 'Test User',
+                email: 'test' + Date.now() + '@example.com',
+                phone: '9876543210',
+                password: 'TestPass123!'
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testUser)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Registration endpoint working!<br>
+                            User created: ${data.user.name}<br>
+                            Email: ${data.user.email}
+                        </div>
+                    `;
+                } else {
+                    const error = await response.json();
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Registration failed!<br>
+                            Status: ${response.status}<br>
+                            Error: ${error.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Cannot connect to registration endpoint!<br>
+                        Error: ${error.message}<br><br>
+                        Make sure backend server is running on port 5000
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-check on page load
+        window.onload = () => checkBackend();
+    </script>
+</body>
+</html>

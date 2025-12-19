@@ -1,0 +1,366 @@
+use('recharge-app');
+
+db.plans.insertMany([
+  {
+    planId: "AIR001",
+    operator: "Airtel",
+    amount: 19,
+    validity: "1 day",
+    benefits: ["200MB data"],
+    description: "Emergency data pack",
+    planType: "data"
+  },
+  {
+    planId: "AIR002",
+    operator: "Airtel",
+    amount: 79,
+    validity: "7 days",
+    benefits: ["1GB/day", "Unlimited calls"],
+    description: "Weekly pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR003",
+    operator: "Airtel",
+    amount: 179,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Monthly starter",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR004",
+    operator: "Airtel",
+    amount: 199,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Popular pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR005",
+    operator: "Airtel",
+    amount: 239,
+    validity: "28 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "High data pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR006",
+    operator: "Airtel",
+    amount: 299,
+    validity: "28 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Premium pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR007",
+    operator: "Airtel",
+    amount: 359,
+    validity: "28 days",
+    benefits: ["3GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Heavy user pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR008",
+    operator: "Airtel",
+    amount: 399,
+    validity: "56 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "2-month pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR009",
+    operator: "Airtel",
+    amount: 449,
+    validity: "56 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Extended validity",
+    planType: "fulltt"
+  },
+  {
+    planId: "AIR010",
+    operator: "Airtel",
+    amount: 599,
+    validity: "84 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Quarterly pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO001",
+    operator: "Jio",
+    amount: 22,
+    validity: "1 day",
+    benefits: ["200MB data"],
+    description: "Daily booster",
+    planType: "data"
+  },
+  {
+    planId: "JIO002",
+    operator: "Jio",
+    amount: 69,
+    validity: "7 days",
+    benefits: ["1GB/day", "Unlimited calls"],
+    description: "Weekly pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO003",
+    operator: "Jio",
+    amount: 179,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Monthly basic",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO004",
+    operator: "Jio",
+    amount: 209,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "JioApps", "Unlimited calls"],
+    description: "App bundle",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO005",
+    operator: "Jio",
+    amount: 239,
+    validity: "28 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Standard pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO006",
+    operator: "Jio",
+    amount: 269,
+    validity: "28 days",
+    benefits: ["2GB/day", "JioCinema", "Unlimited calls"],
+    description: "Entertainment",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO007",
+    operator: "Jio",
+    amount: 299,
+    validity: "28 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "High data",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO008",
+    operator: "Jio",
+    amount: 329,
+    validity: "28 days",
+    benefits: ["2.5GB/day", "Netflix", "Unlimited calls"],
+    description: "Netflix bundle",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO009",
+    operator: "Jio",
+    amount: 349,
+    validity: "28 days",
+    benefits: ["3GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Premium pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "JIO010",
+    operator: "Jio",
+    amount: 399,
+    validity: "56 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "2-month basic",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI001",
+    operator: "Vi",
+    amount: 24,
+    validity: "1 day",
+    benefits: ["200MB data"],
+    description: "Emergency pack",
+    planType: "data"
+  },
+  {
+    planId: "VI002",
+    operator: "Vi",
+    amount: 79,
+    validity: "7 days",
+    benefits: ["1GB/day", "Unlimited calls"],
+    description: "Weekly pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI003",
+    operator: "Vi",
+    amount: 199,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Monthly starter",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI004",
+    operator: "Vi",
+    amount: 219,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Standard pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI005",
+    operator: "Vi",
+    amount: 249,
+    validity: "28 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "High data",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI006",
+    operator: "Vi",
+    amount: 279,
+    validity: "28 days",
+    benefits: ["2GB/day", "Vi Movies & TV", "Unlimited calls"],
+    description: "Entertainment",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI007",
+    operator: "Vi",
+    amount: 319,
+    validity: "28 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Premium pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI008",
+    operator: "Vi",
+    amount: 359,
+    validity: "28 days",
+    benefits: ["3GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Max pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI009",
+    operator: "Vi",
+    amount: 449,
+    validity: "56 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "2-month basic",
+    planType: "fulltt"
+  },
+  {
+    planId: "VI010",
+    operator: "Vi",
+    amount: 519,
+    validity: "56 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "2-month premium",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN001",
+    operator: "BSNL",
+    amount: 18,
+    validity: "1 day",
+    benefits: ["200MB data"],
+    description: "Daily pack",
+    planType: "data"
+  },
+  {
+    planId: "BSN002",
+    operator: "BSNL",
+    amount: 72,
+    validity: "7 days",
+    benefits: ["1GB/day", "Unlimited calls"],
+    description: "Weekly pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN003",
+    operator: "BSNL",
+    amount: 187,
+    validity: "28 days",
+    benefits: ["1GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Monthly basic",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN004",
+    operator: "BSNL",
+    amount: 197,
+    validity: "28 days",
+    benefits: ["1.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Standard pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN005",
+    operator: "BSNL",
+    amount: 227,
+    validity: "28 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "High data",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN006",
+    operator: "BSNL",
+    amount: 247,
+    validity: "28 days",
+    benefits: ["2GB/day", "Unlimited calls", "STD calls"],
+    description: "Complete pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN007",
+    operator: "BSNL",
+    amount: 297,
+    validity: "28 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Premium pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN008",
+    operator: "BSNL",
+    amount: 327,
+    validity: "28 days",
+    benefits: ["3GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "Max pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN009",
+    operator: "BSNL",
+    amount: 397,
+    validity: "70 days",
+    benefits: ["2GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "70-day pack",
+    planType: "fulltt"
+  },
+  {
+    planId: "BSN010",
+    operator: "BSNL",
+    amount: 447,
+    validity: "70 days",
+    benefits: ["2.5GB/day", "Unlimited calls", "100 SMS/day"],
+    description: "70-day premium",
+    planType: "fulltt"
+  }
+]);
+
+db.plans.countDocuments();
