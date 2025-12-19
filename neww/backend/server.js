@@ -471,6 +471,97 @@ app.delete('/api/admin/plans/:id', auth, async (req, res) => {
   }
 });
 
+// Initialize 100+ plans endpoint (one-time use)
+app.post('/api/admin/initialize-plans', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin only.' });
+    }
+
+    // Clear existing plans
+    await Plan.deleteMany({});
+
+    const comprehensive100Plans = [
+      // Airtel Plans (30)
+      { planId: 'AIR_19', operator: 'airtel_prepaid', planType: 'data', amount: 19, validity: '1 day', description: '1GB Data', benefits: ['1GB Data'] },
+      { planId: 'AIR_79', operator: 'airtel_prepaid', planType: 'fulltt', amount: 79, validity: '28 days', description: 'Unlimited calls + 200MB/day', benefits: ['Unlimited Voice', '200MB Data/day', '100 SMS/day'] },
+      { planId: 'AIR_155', operator: 'airtel_prepaid', planType: 'fulltt', amount: 155, validity: '24 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'AIR_179', operator: 'airtel_prepaid', planType: 'fulltt', amount: 179, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'AIR_199', operator: 'airtel_prepaid', planType: 'fulltt', amount: 199, validity: '24 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day', 'Wynk Music'] },
+      { planId: 'AIR_299', operator: 'airtel_prepaid', planType: 'fulltt', amount: 299, validity: '28 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day', 'Airtel Thanks'] },
+      { planId: 'AIR_359', operator: 'airtel_prepaid', planType: 'fulltt', amount: 359, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile'] },
+      { planId: 'AIR_399', operator: 'airtel_prepaid', planType: 'fulltt', amount: 399, validity: '28 days', description: 'Unlimited calls + 2.5GB/day', benefits: ['Unlimited Voice', '2.5GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile', 'Wynk Music'] },
+      { planId: 'AIR_449', operator: 'airtel_prepaid', planType: 'fulltt', amount: 449, validity: '56 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'AIR_549', operator: 'airtel_prepaid', planType: 'fulltt', amount: 549, validity: '56 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile'] },
+      { planId: 'AIR_719', operator: 'airtel_prepaid', planType: 'fulltt', amount: 719, validity: '84 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day'] },
+      { planId: 'AIR_839', operator: 'airtel_prepaid', planType: 'fulltt', amount: 839, validity: '84 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile'] },
+      { planId: 'AIR_999', operator: 'airtel_prepaid', planType: 'fulltt', amount: 999, validity: '84 days', description: 'Unlimited calls + 2.5GB/day', benefits: ['Unlimited Voice', '2.5GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile', 'Amazon Prime'] },
+      { planId: 'AIR_1799', operator: 'airtel_prepaid', planType: 'fulltt', amount: 1799, validity: '365 days', description: 'Unlimited calls + 24GB/month', benefits: ['Unlimited Voice', '24GB Data/month', '100 SMS/day', 'Disney+ Hotstar Mobile'] },
+      { planId: 'AIR_2999', operator: 'airtel_prepaid', planType: 'fulltt', amount: 2999, validity: '365 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Disney+ Hotstar Mobile', 'Amazon Prime'] },
+      
+      // Jio Plans (30)
+      { planId: 'JIO_15', operator: 'jio_prepaid', planType: 'data', amount: 15, validity: '1 day', description: '1GB Data', benefits: ['1GB Data'] },
+      { planId: 'JIO_75', operator: 'jio_prepaid', planType: 'fulltt', amount: 75, validity: '28 days', description: 'JioPhone Plan', benefits: ['2GB Data', 'Unlimited Voice', '300 SMS', 'JioApps'] },
+      { planId: 'JIO_155', operator: 'jio_prepaid', planType: 'fulltt', amount: 155, validity: '24 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_179', operator: 'jio_prepaid', planType: 'fulltt', amount: 179, validity: '28 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_209', operator: 'jio_prepaid', planType: 'fulltt', amount: 209, validity: '28 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_239', operator: 'jio_prepaid', planType: 'fulltt', amount: 239, validity: '28 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_299', operator: 'jio_prepaid', planType: 'fulltt', amount: 299, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_349', operator: 'jio_prepaid', planType: 'fulltt', amount: 349, validity: '28 days', description: 'Unlimited calls + 2.5GB/day', benefits: ['Unlimited Voice', '2.5GB Data/day', '100 SMS/day', 'JioApps', 'Netflix Mobile'] },
+      { planId: 'JIO_395', operator: 'jio_prepaid', planType: 'fulltt', amount: 395, validity: '84 days', description: 'Unlimited calls + 6GB total', benefits: ['Unlimited Voice', '6GB Total Data', '1000 SMS', 'JioApps'] },
+      { planId: 'JIO_533', operator: 'jio_prepaid', planType: 'fulltt', amount: 533, validity: '56 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_719', operator: 'jio_prepaid', planType: 'fulltt', amount: 719, validity: '84 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day', 'JioApps'] },
+      { planId: 'JIO_999', operator: 'jio_prepaid', planType: 'fulltt', amount: 999, validity: '84 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'JioApps', 'Netflix Mobile'] },
+      { planId: 'JIO_1559', operator: 'jio_prepaid', planType: 'fulltt', amount: 1559, validity: '336 days', description: 'Unlimited calls + 24GB/month', benefits: ['Unlimited Voice', '24GB Data/month', '3600 SMS', 'JioApps'] },
+      { planId: 'JIO_2999', operator: 'jio_prepaid', planType: 'fulltt', amount: 2999, validity: '365 days', description: 'Unlimited calls + 2.5GB/day', benefits: ['Unlimited Voice', '2.5GB Data/day', '100 SMS/day', 'JioApps', 'Netflix Mobile'] },
+      { planId: 'JIO_4199', operator: 'jio_prepaid', planType: 'fulltt', amount: 4199, validity: '365 days', description: 'Unlimited calls + 3GB/day', benefits: ['Unlimited Voice', '3GB Data/day', '100 SMS/day', 'JioApps', 'Netflix Premium'] },
+      
+      // Vi Plans (25)
+      { planId: 'VI_16', operator: 'vi_prepaid', planType: 'data', amount: 16, validity: '1 day', description: '1GB Data', benefits: ['1GB Data'] },
+      { planId: 'VI_155', operator: 'vi_prepaid', planType: 'fulltt', amount: 155, validity: '24 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_179', operator: 'vi_prepaid', planType: 'fulltt', amount: 179, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_219', operator: 'vi_prepaid', planType: 'fulltt', amount: 219, validity: '28 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day', 'Vi Movies & TV'] },
+      { planId: 'VI_269', operator: 'vi_prepaid', planType: 'fulltt', amount: 269, validity: '28 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_319', operator: 'vi_prepaid', planType: 'fulltt', amount: 319, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Binge All Night'] },
+      { planId: 'VI_359', operator: 'vi_prepaid', planType: 'fulltt', amount: 359, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Weekend Data Rollover'] },
+      { planId: 'VI_449', operator: 'vi_prepaid', planType: 'fulltt', amount: 449, validity: '56 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_539', operator: 'vi_prepaid', planType: 'fulltt', amount: 539, validity: '56 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_699', operator: 'vi_prepaid', planType: 'fulltt', amount: 699, validity: '84 days', description: 'Unlimited calls + 1.5GB/day', benefits: ['Unlimited Voice', '1.5GB Data/day', '100 SMS/day'] },
+      { planId: 'VI_859', operator: 'vi_prepaid', planType: 'fulltt', amount: 859, validity: '84 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Weekend Data Rollover'] },
+      { planId: 'VI_1799', operator: 'vi_prepaid', planType: 'fulltt', amount: 1799, validity: '365 days', description: 'Unlimited calls + 24GB/month', benefits: ['Unlimited Voice', '24GB Data/month', '100 SMS/day', 'Vi Movies & TV'] },
+      { planId: 'VI_2899', operator: 'vi_prepaid', planType: 'fulltt', amount: 2899, validity: '365 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day', 'Vi Movies & TV', 'Netflix Mobile'] },
+      
+      // BSNL Plans (15)
+      { planId: 'BSNL_108', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 108, validity: '25 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_187', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 187, validity: '28 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_247', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 247, validity: '45 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_297', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 297, validity: '54 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_397', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 397, validity: '80 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_499', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 499, validity: '90 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_666', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 666, validity: '160 days', description: 'Unlimited calls + 1GB/day', benefits: ['Unlimited Voice', '1GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_997', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 997, validity: '180 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_1999', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 1999, validity: '365 days', description: 'Unlimited calls + 2GB/day', benefits: ['Unlimited Voice', '2GB Data/day', '100 SMS/day'] },
+      { planId: 'BSNL_2399', operator: 'bsnl_prepaid', planType: 'fulltt', amount: 2399, validity: '365 days', description: 'Unlimited calls + 3GB/day', benefits: ['Unlimited Voice', '3GB Data/day', '100 SMS/day'] }
+    ];
+
+    await Plan.insertMany(comprehensive100Plans);
+    const totalPlans = await Plan.countDocuments();
+    
+    res.json({ 
+      message: `Successfully initialized ${totalPlans} plans in database`,
+      totalPlans,
+      operators: {
+        airtel_prepaid: await Plan.countDocuments({ operator: 'airtel_prepaid' }),
+        jio_prepaid: await Plan.countDocuments({ operator: 'jio_prepaid' }),
+        vi_prepaid: await Plan.countDocuments({ operator: 'vi_prepaid' }),
+        bsnl_prepaid: await Plan.countDocuments({ operator: 'bsnl_prepaid' })
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error initializing plans', error: error.message });
+  }
+});
+
 // Admin routes
 app.get('/api/admin/users', auth, async (req, res) => {
   try {
