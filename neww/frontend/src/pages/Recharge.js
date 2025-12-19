@@ -410,18 +410,25 @@ const Recharge = () => {
   const fetchPlans = async () => {
     setPlansLoading(true);
     try {
-      // Load admin-added plans from localStorage
-      const adminPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-      const operatorAdminPlans = adminPlans.filter(plan => plan.operator === selectedOperator);
+      // Fetch plans from database
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/plans/all`);
+      const data = await response.json();
       
-      // Combine with mock plans
-      const mockOperatorPlans = mockPlans[selectedOperator] || [];
-      const allPlans = [...operatorAdminPlans, ...mockOperatorPlans];
+      let operatorPlans = [];
+      if (data.plansByOperator && data.plansByOperator[selectedOperator]) {
+        operatorPlans = data.plansByOperator[selectedOperator];
+      }
       
-      console.log(`Loading ${allPlans.length} plans for ${selectedOperator}:`, allPlans);
-      setPlans(allPlans);
+      // Fallback to mock plans if no database plans
+      if (operatorPlans.length === 0) {
+        operatorPlans = mockPlans[selectedOperator] || [];
+      }
+      
+      console.log(`Loading ${operatorPlans.length} plans for ${selectedOperator}`);
+      setPlans(operatorPlans);
     } catch (error) {
-      toast.error('Failed to load plans');
+      console.error('Failed to load plans:', error);
+      // Fallback to mock plans
       setPlans(mockPlans[selectedOperator] || []);
     } finally {
       setPlansLoading(false);

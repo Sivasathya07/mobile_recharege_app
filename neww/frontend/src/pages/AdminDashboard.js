@@ -59,37 +59,63 @@ const AdminDashboard = () => {
       console.log('🔑 Token:', token?.substring(0, 20) + '...');
       console.log('🌐 API URL:', process.env.REACT_APP_API_URL);
 
-      // Fetch users
+      let fetchedUsers = [];
+      let fetchedPlans = [];
+      
+      // Fetch users directly from working endpoint
       try {
-        const usersRes = await adminAPI.getUsers();
-        console.log('👥 Users response:', usersRes.data);
-        setUsers(usersRes.data.users || usersRes.data || []);
+        const usersRes = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/users/all`);
+        const usersData = await usersRes.json();
+        console.log('👥 Users response:', usersData);
+        fetchedUsers = usersData.users || [];
+        setUsers(fetchedUsers);
       } catch (error) {
         console.error('❌ Users fetch failed:', error);
         setUsers([]);
       }
 
-      // Fetch stats
+      // Fetch plans directly from working endpoint
       try {
-        const statsRes = await adminAPI.getStats();
-        console.log('📊 Stats response:', statsRes.data);
-        setStats(statsRes.data);
-      } catch (error) {
-        console.error('❌ Stats fetch failed:', error);
-        setStats({ totalUsers: 0, totalAdmins: 0, totalTransactions: 0, totalRevenue: 0, recentTransactions: [] });
-      }
-
-      // Fetch plans
-      try {
-        const plansRes = await adminAPI.getPlans();
-        console.log('📋 Plans response:', plansRes.data);
-        setPlans(plansRes.data || []);
+        const plansRes = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/plans/all`);
+        const plansData = await plansRes.json();
+        console.log('📋 Plans response:', plansData);
+        
+        // Convert plans object to array
+        const allPlans = [];
+        if (plansData.plansByOperator) {
+          Object.values(plansData.plansByOperator).forEach(operatorPlans => {
+            allPlans.push(...operatorPlans);
+          });
+        }
+        fetchedPlans = allPlans;
+        setPlans(allPlans);
       } catch (error) {
         console.error('❌ Plans fetch failed:', error);
-        // Fallback to demo data
-        initializeAdminData();
-        const adminPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-        setPlans(adminPlans);
+        setPlans([]);
+      }
+
+      // Fetch transactions and calculate stats
+      try {
+        const transRes = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/transactions/all`);
+        const transData = await transRes.json();
+        console.log('📊 Transactions response:', transData);
+        
+        setStats({
+          totalUsers: fetchedUsers.length,
+          totalAdmins: fetchedUsers.filter(u => u.role === 'admin').length,
+          totalTransactions: transData.totalTransactions || 0,
+          totalRevenue: transData.totalRevenue || 0,
+          recentTransactions: transData.transactions?.slice(0, 15) || []
+        });
+      } catch (error) {
+        console.error('❌ Transactions fetch failed:', error);
+        setStats({ 
+          totalUsers: fetchedUsers.length,
+          totalAdmins: fetchedUsers.filter(u => u.role === 'admin').length,
+          totalTransactions: 0, 
+          totalRevenue: 0, 
+          recentTransactions: [] 
+        });
       }
 
       // Set default analytics
@@ -126,9 +152,22 @@ const AdminDashboard = () => {
         amount: parseInt(planForm.amount)
       };
       
-      const response = await adminAPI.addPlan(planData);
-      setPlans(prev => [response.data, ...prev]);
-      toast.success('Plan added successfully');
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/plans`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(planData)
+      });
+      
+      if (response.ok) {
+        const newPlan = await response.json();
+        setPlans(prev => [newPlan.plan || newPlan, ...prev]);
+        toast.success('Plan added successfully');
+      } else {
+        throw new Error('Failed to add plan');
+      }
       
       setShowAddPlan(false);
       setPlanForm({ operator: '', planId: '', amount: '', validity: '', description: '', benefits: '', planType: 'fulltt' });
@@ -142,9 +181,20 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this plan?')) {
       try {
         const token = localStorage.getItem('token');
-        await adminAPI.deletePlan(planId);
-        setPlans(prev => prev.filter(plan => plan._id !== planId));
-        toast.success('Plan deleted successfully');
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/plans/${planId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          setPlans(prev => prev.filter(plan => plan._id !== planId));
+          toast.success('Plan deleted successfully');
+        } else {
+          throw new Error('Failed to delete plan');
+        }
       } catch (error) {
         console.error('Plan deletion error:', error);
         toast.error('Failed to delete plan');
@@ -177,11 +227,24 @@ const AdminDashboard = () => {
         amount: parseInt(planForm.amount)
       };
       
-      const response = await adminAPI.updatePlan(editingPlan._id, planData);
-      setPlans(prev => prev.map(plan => 
-        plan._id === editingPlan._id ? response.data : plan
-      ));
-      toast.success('Plan updated successfully');
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/admin/plans/${editingPlan._id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(planData)
+      });
+      
+      if (response.ok) {
+        const updatedPlan = await response.json();
+        setPlans(prev => prev.map(plan => 
+          plan._id === editingPlan._id ? (updatedPlan.plan || updatedPlan) : plan
+        ));
+        toast.success('Plan updated successfully');
+      } else {
+        throw new Error('Failed to update plan');
+      }
       
       setShowEditPlan(false);
       setEditingPlan(null);
