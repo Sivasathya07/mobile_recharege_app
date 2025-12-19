@@ -47,135 +47,74 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       
-      // Demo users data
-      const demoUsers = [
-        {
-          _id: '1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          role: 'user',
-          balance: 1250,
-          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          _id: '2',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          role: 'user',
-          balance: 850,
-          createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          _id: '3',
-          name: 'Admin User',
-          email: 'admin@demo.com',
-          role: 'admin',
-          balance: 5000,
-          createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          _id: '4',
-          name: 'Mike Johnson',
-          email: 'mike@example.com',
-          role: 'user',
-          balance: 2100,
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ];
-      
-      // Get global transactions from localStorage
-      const globalTransactions = JSON.parse(localStorage.getItem('adminGlobalTransactions') || '[]');
-      
-      // Demo transactions if none exist
-      const demoTransactions = [
-        {
-          _id: '1',
-          type: 'recharge',
-          amount: 299,
-          status: 'success',
-          operator: 'Airtel',
-          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          userName: 'John Doe'
-        },
-        {
-          _id: '2',
-          type: 'wallet_add',
-          amount: 500,
-          status: 'success',
-          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-          userName: 'Jane Smith'
-        },
-        {
-          _id: '3',
-          type: 'recharge',
-          amount: 179,
-          status: 'success',
-          operator: 'Jio',
-          createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-          userName: 'Mike Johnson'
-        },
-        {
-          _id: '4',
-          type: 'recharge',
-          amount: 399,
-          status: 'success',
-          operator: 'Vi',
-          createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-          userName: 'John Doe'
-        },
-        {
-          _id: '5',
-          type: 'recharge',
-          amount: 155,
-          status: 'success',
-          operator: 'BSNL',
-          createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-          userName: 'Jane Smith'
-        }
-      ];
-      
-      const allTransactions = globalTransactions.length > 0 ? globalTransactions : demoTransactions;
-      
-      // Get admin plans from localStorage
-      const adminPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-      setPlans(adminPlans);
-      
-      setUsers(demoUsers);
-      
-      // Calculate stats
-      const totalRevenue = allTransactions.filter(t => t.type === 'recharge').reduce((sum, t) => sum + (t.amount || 0), 0);
-      
-      setStats({
-        totalUsers: demoUsers.length,
-        totalAdmins: demoUsers.filter(u => u.role === 'admin').length,
-        totalTransactions: allTransactions.length,
-        totalRevenue,
-        recentTransactions: allTransactions.slice(0, 15)
-      });
-      
-      // Recharge analytics
-      const operatorStats = { 'Airtel': { amount: 0, count: 0 }, 'Jio': { amount: 0, count: 0 }, 'Vi': { amount: 0, count: 0 }, 'BSNL': { amount: 0, count: 0 } };
-      allTransactions.filter(t => t.type === 'recharge').forEach(t => {
-        const operator = t.operator || 'Airtel';
-        if (operatorStats[operator]) {
-          operatorStats[operator].amount += t.amount;
-          operatorStats[operator].count += 1;
-        }
-      });
-      
-      const totalAmount = Object.values(operatorStats).reduce((sum, op) => sum + op.amount, 0);
-      const rechargeAnalytics = Object.entries(operatorStats).map(([operator, stats]) => ({
-        operator,
-        amount: stats.amount,
-        count: stats.count,
-        percentage: totalAmount > 0 ? Math.round((stats.amount / totalAmount) * 100) : 25
-      }));
-      setRechargeData(rechargeAnalytics);
+      if (!token) {
+        toast.error('Authentication required');
+        navigate('/login');
+        return;
+      }
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+
+      // Fetch real data from backend
+      const [usersRes, statsRes, plansRes, transactionsRes] = await Promise.all([
+        fetch('/api/admin/users', { headers }),
+        fetch('/api/admin/stats', { headers }),
+        fetch('/api/admin/plans', { headers }),
+        fetch('/api/admin/transactions', { headers })
+      ]);
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData.users || []);
+      }
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData);
+      }
+
+      if (plansRes.ok) {
+        const plansData = await plansRes.json();
+        setPlans(plansData || []);
+      }
+
+      if (transactionsRes.ok) {
+        const transactionsData = await transactionsRes.json();
+        const transactions = transactionsData.transactions || [];
+        
+        // Calculate recharge analytics
+        const operatorStats = { 'Airtel': { amount: 0, count: 0 }, 'Jio': { amount: 0, count: 0 }, 'Vi': { amount: 0, count: 0 }, 'BSNL': { amount: 0, count: 0 } };
+        transactions.filter(t => t.type === 'recharge').forEach(t => {
+          const operator = t.operator || 'Airtel';
+          if (operatorStats[operator]) {
+            operatorStats[operator].amount += t.amount;
+            operatorStats[operator].count += 1;
+          }
+        });
+        
+        const totalAmount = Object.values(operatorStats).reduce((sum, op) => sum + op.amount, 0);
+        const rechargeAnalytics = Object.entries(operatorStats).map(([operator, stats]) => ({
+          operator,
+          amount: stats.amount,
+          count: stats.count,
+          percentage: totalAmount > 0 ? Math.round((stats.amount / totalAmount) * 100) : 25
+        }));
+        setRechargeData(rechargeAnalytics);
+      }
       
     } catch (error) {
       console.error('Admin data error:', error);
       toast.error('Failed to load admin data');
+      
+      // Fallback to demo data if API fails
+      initializeAdminData();
+      const adminPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
+      setPlans(adminPlans);
     } finally {
       setLoading(false);
     }
@@ -184,6 +123,7 @@ const AdminDashboard = () => {
   const handleAddPlan = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
       const benefits = planForm.benefits.split(',').map(b => b.trim());
       const planData = { 
         ...planForm, 
@@ -191,20 +131,23 @@ const AdminDashboard = () => {
         amount: parseInt(planForm.amount)
       };
       
-      // Try to save to database first
-      // Save to localStorage for now since database plans endpoint needs auth
-      const newPlan = {
-        _id: Date.now().toString(),
-        ...planData,
-        createdAt: new Date().toISOString()
-      };
+      const response = await fetch('/api/admin/plans', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(planData)
+      });
       
-      const existingPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-      const updatedPlans = [newPlan, ...existingPlans];
-      localStorage.setItem('adminPlans', JSON.stringify(updatedPlans));
-      
-      setPlans(prev => [newPlan, ...prev]);
-      toast.success('Plan added successfully');
+      if (response.ok) {
+        const newPlan = await response.json();
+        setPlans(prev => [newPlan, ...prev]);
+        toast.success('Plan added successfully');
+      } else {
+        const error = await response.json();
+        toast.error(error.message || 'Failed to add plan');
+      }
       
       setShowAddPlan(false);
       setPlanForm({ operator: '', planId: '', amount: '', validity: '', description: '', benefits: '', planType: 'fulltt' });
@@ -216,13 +159,27 @@ const AdminDashboard = () => {
 
   const handleDeletePlan = async (planId) => {
     if (window.confirm('Are you sure you want to delete this plan?')) {
-      // Delete from localStorage
-      const existingPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-      const updatedPlans = existingPlans.filter(plan => plan._id !== planId);
-      localStorage.setItem('adminPlans', JSON.stringify(updatedPlans));
-      
-      setPlans(prev => prev.filter(plan => plan._id !== planId));
-      toast.success('Plan deleted successfully');
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/admin/plans/${planId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          setPlans(prev => prev.filter(plan => plan._id !== planId));
+          toast.success('Plan deleted successfully');
+        } else {
+          const error = await response.json();
+          toast.error(error.message || 'Failed to delete plan');
+        }
+      } catch (error) {
+        console.error('Plan deletion error:', error);
+        toast.error('Failed to delete plan');
+      }
     }
   };
 
@@ -243,31 +200,39 @@ const AdminDashboard = () => {
   const handleUpdatePlan = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
       const benefits = planForm.benefits.split(',').map(b => b.trim());
-      const updatedPlan = { 
-        ...editingPlan, 
+      const planData = { 
         ...planForm, 
         benefits,
         amount: parseInt(planForm.amount)
       };
       
-      // Try to update in database first
-      // Update in localStorage
-      const existingPlans = JSON.parse(localStorage.getItem('adminPlans') || '[]');
-      const updatedPlans = existingPlans.map(plan => 
-        plan._id === editingPlan._id ? updatedPlan : plan
-      );
-      localStorage.setItem('adminPlans', JSON.stringify(updatedPlans));
+      const response = await fetch(`/api/admin/plans/${editingPlan._id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(planData)
+      });
       
-      setPlans(prev => prev.map(plan => 
-        plan._id === editingPlan._id ? updatedPlan : plan
-      ));
-      toast.success('Plan updated successfully');
+      if (response.ok) {
+        const updatedPlan = await response.json();
+        setPlans(prev => prev.map(plan => 
+          plan._id === editingPlan._id ? updatedPlan : plan
+        ));
+        toast.success('Plan updated successfully');
+      } else {
+        const error = await response.json();
+        toast.error(error.message || 'Failed to update plan');
+      }
       
       setShowEditPlan(false);
       setEditingPlan(null);
       setPlanForm({ operator: '', planId: '', amount: '', validity: '', description: '', benefits: '', planType: 'fulltt' });
     } catch (error) {
+      console.error('Plan update error:', error);
       toast.error('Failed to update plan');
     }
   };

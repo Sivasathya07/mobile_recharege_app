@@ -17,14 +17,21 @@ router.get('/plans', auth, async (req, res) => {
   }
 });
 
-// Add new plan
+// Add new plan (admin only)
 router.post('/plans', auth, async (req, res) => {
   try {
+    // Check if user is admin
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+
     const plan = new Plan(req.body);
     await plan.save();
     res.json(plan);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error adding plan:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
@@ -49,6 +56,79 @@ router.delete('/plans/:id', auth, async (req, res) => {
 });
 
 
+
+// Get all users (admin only)
+router.get('/users', auth, async (req, res) => {
+  try {
+    // Check if user is admin
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+
+    const users = await User.find({}).select('-password -twoFactorSecret').sort({ createdAt: -1 });
+    res.json({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get all transactions (admin only)
+router.get('/transactions', auth, async (req, res) => {
+  try {
+    // Check if user is admin
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+
+    const transactions = await Transaction.find({})
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(100);
+    
+    res.json({ transactions });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get dashboard stats (admin only)
+router.get('/stats', auth, async (req, res) => {
+  try {
+    // Check if user is admin
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+
+    const totalUsers = await User.countDocuments({});
+    const totalAdmins = await User.countDocuments({ role: 'admin' });
+    const totalTransactions = await Transaction.countDocuments({});
+    const totalRevenue = await Transaction.aggregate([
+      { $match: { type: 'recharge', status: 'success' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+
+    const recentTransactions = await Transaction.find({})
+      .populate('userId', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(15);
+
+    res.json({
+      totalUsers,
+      totalAdmins,
+      totalTransactions,
+      totalRevenue: totalRevenue[0]?.total || 0,
+      recentTransactions
+    });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 // Get analytics data
 router.get('/analytics', auth, async (req, res) => {
